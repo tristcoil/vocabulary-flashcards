@@ -1,0 +1,11 @@
+
+we are creating custom backend to store user flashcard progress
+npm install express mongoose cors
+
+
+
+frontend progress viz:
+npm install plotly.js react-plotly.js
+npm install @nivo/core @nivo/bar
+
+
