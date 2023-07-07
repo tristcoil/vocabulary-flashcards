@@ -2,44 +2,47 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Plot from "react-plotly.js";
 
-const LearningProgress = ({ userId }) => {
+const LearningProgress = ({ collection, username }) => {
   const [progressData, setProgressData] = useState([]);
-  const [difficultyCounts, setDifficultyCounts] = useState({ easy: 0, medium: 0, hard: 0, unknown: 0 });
+  const [difficultyCounts, setDifficultyCounts] = useState({
+    easy: 0,
+    medium: 0,
+    hard: 0,
+    unknown: 0,
+  });
 
   useEffect(() => {
-    const fetchProgressData = async () => {
+    const fetchDataAndCountDifficulty = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/flashcard/${userId}`);
+        console.log("Fetching learning progress data...");
+        const response = await axios.get(
+          `http://localhost:8000/api/flashcards/${collection}/${username}`
+        );
+        console.log("Learning progress data:", response.data);
         setProgressData(response.data);
+
+        console.log("Counting difficulty occurrences...");
+        const counts = { easy: 0, medium: 0, hard: 0, unknown: 0 };
+        response.data.forEach((data) => {
+          const difficulty = data.difficulty || "unknown";
+          counts[difficulty] += 1;
+        });
+        console.log("Difficulty counts:", counts);
+        setDifficultyCounts(counts);
       } catch (error) {
         console.log("Failed to fetch learning progress data:", error);
       }
     };
 
-    fetchProgressData();
-  }, [userId]);
-
-  useEffect(() => {
-    const countDifficultyOccurrences = () => {
-      const counts = { easy: 0, medium: 0, hard: 0, unknown: 0 };
-
-      progressData.forEach((data) => {
-        const difficulty = data.difficulty || "unknown";
-        counts[difficulty] += 1;
-      });
-
-      setDifficultyCounts(counts);
-    };
-
-    countDifficultyOccurrences();
-  }, [progressData]);
+    fetchDataAndCountDifficulty();
+  }, [collection, username]);
 
   const difficultyLabels = Object.keys(difficultyCounts);
   const difficultyValues = Object.values(difficultyCounts);
 
   return (
     <div>
-      <h2>Learning Progress</h2>
+      <h2>Learning Progress </h2>
       {progressData.map((data) => (
         <div key={data._id}>
           <p>Question: {data.question}</p>
@@ -48,7 +51,7 @@ const LearningProgress = ({ userId }) => {
         </div>
       ))}
 
-      <h2>Difficulty Counts</h2>
+      <h2>Difficulty Counts {collection} {username}</h2>
       <Plot
         data={[
           {

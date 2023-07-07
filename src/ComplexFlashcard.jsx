@@ -1,20 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
-const ComplexFlashcard = ({ questions }) => {
-  const [count, setCount] = useState(0);
+const ComplexFlashcard = ({ questions, username }) => {
+  console.log('Flashcard Questions:', questions);
+  console.log('Flashcard Username:', username);
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [difficulty, setDifficulty] = useState(null);
 
+  useEffect(() => {
+    if (questions[currentQuestionIndex]?.difficulty) {
+      setDifficulty(questions[currentQuestionIndex].difficulty);
+    }
+  }, [questions, currentQuestionIndex]);
+
   const handleNextQuestion = async () => {
     try {
-      await axios.post("http://localhost:8000/api/flashcard", {
-        userId: "user123", // Replace with the appropriate user ID
-        count,
-        currentQuestionIndex,
+      await axios.post("http://localhost:8000/api/vocabulary-flashcard", {
+        userId: username,
         difficulty,
         question: currentQuestion.question,
         answer: currentQuestion.answer,
+        key: currentQuestion.key,
       });
 
       setCurrentQuestionIndex((prevIndex) =>
@@ -29,13 +36,12 @@ const ComplexFlashcard = ({ questions }) => {
 
   const handlePreviousQuestion = async () => {
     try {
-      await axios.post("http://localhost:8000/api/flashcard", {
-        userId: "user123", // Replace with the appropriate user ID
-        count,
-        currentQuestionIndex,
+      await axios.post("http://localhost:8000/api/vocabulary-flashcard", {
+        userId: username,
         difficulty,
         question: currentQuestion.question,
         answer: currentQuestion.answer,
+        key: currentQuestion.key,
       });
 
       setCurrentQuestionIndex((prevIndex) =>
@@ -83,16 +89,12 @@ const ComplexFlashcard = ({ questions }) => {
       </div>
 
       <br />
-      <button
-        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4"
-        onClick={() => setCount((count) => count + 1)}
-      >
-        Count is {count}
-      </button>
 
       <div>
         <br />
         currentQuestionIndex is: {currentQuestionIndex}
+        <br />
+        questions.length is : {questions.length}
       </div>
 
       <div className="mt-4">
