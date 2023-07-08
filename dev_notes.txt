@@ -9,3 +9,11 @@ npm install plotly.js react-plotly.js
 npm install @nivo/core @nivo/bar
 
 
+
+// -------------------- google oauth -------------------------- //
+https://www.npmjs.com/package/@react-oauth/google
+coil@coil-VM:~/Desktop/vocabulary-flashcards$ npm i @react-oauth/google jwt-decode
+
+
+and then we will store username in a cookie (unencrypted for now, but later must be encrypted)
+coil@coil-VM:~/Desktop/vocabulary-flashcards$ npm install js-cookie
